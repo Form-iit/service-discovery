@@ -4,11 +4,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -30,7 +28,7 @@ public class SecurityConfig {
         return http
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/actuator/**").hasRole("ADMIN")    // Require authentication for actuator endpoints
-                        .requestMatchers("/eureka/**").permitAll()  // Allow Eureka dashboard access
+                        .requestMatchers("/eureka/**").hasRole("ADMIN")  // Allow Eureka dashboard access
                         .anyRequest().authenticated()  // Allow all other requests
                 )
                 .httpBasic(Customizer.withDefaults())  // Enable Basic Authentication (optional)

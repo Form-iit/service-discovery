@@ -1,9 +1,63 @@
-spring:
-    profiles:
-        active: ${SPRING_PROFILES_ACTIVE}
-server:
-    port: ${SERVER_PORT}
 eureka:
+    server:
+        enable-self-preservation: true
+    
+    instance:
+        # Prefer IP address for registration
+        prefer-ip-address: true
+        
+        # Hostname configuration
+        hostname: ${EUREKA_INSTANCE_HOSTNAME}
+        
+        # Lease settings for instance health checking
+        lease-renewal-interval-in-seconds: 30
+        lease-expiration-duration-in-seconds: 90
+
     client:
+        register-with-eureka: false
+        fetch-registry: false
+
         serviceUrl:
-            defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}
+            defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE} # can be multiple ones for high availability
+
+# Server Port Configuration
+server:
+    port: ${SERVER_PORT:8761}
+
+# Security Configuration
+app:
+    security:
+        user:
+            name: ${EUREKA_ADMIN_USERNAME}
+            password: ${EUREKA_ADMIN_PASSWORD}
+
+# Management Endpoints
+management:
+    endpoints:
+        web:
+            exposure:
+                include: health,info,metrics,prometheus,refresh,env
+            base-path: /actuator
+    endpoint:
+        health:
+            show-details: always
+
+# Logging Configuration
+logging:
+    level:
+        com.netflix.eureka: WARN
+        com.netflix.discovery: WARN
+    file:
+        name: /var/log/eureka-server/eureka.log
+    logback:
+        rollingpolicy:
+            max-file-size: 10MB
+            max-history: 7
+
+# Resilience Configuration
+spring:
+    cloud:
+        loadbalancer:
+            cache:
+                enabled: true
+                ttl: 15s
