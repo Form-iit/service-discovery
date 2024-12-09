@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  eureka:
+    build:
+      context: .
+      dockerfile: dockerfile
+    container_name: eureka
+    environment:
+      - SERVER_PORT=${SERVER_PORT}
+      - EUREKA_INSTANCE_IP_ADDRESS=${EUREKA_INSTANCE_IP_ADDRESS}
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}
+      - EUREKA_ADMIN_USERNAME=${EUREKA_ADMIN_USERNAME}
+      - EUREKA_ADMIN_PASSWORD=${EUREKA_ADMIN_PASSWORD}
+    ports:
+      - "8761:8761"
