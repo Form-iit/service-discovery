@@ -18,38 +18,44 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    @Value("${app.security.user.name}")
-    private String username;
-    @Value("${app.security.user.password}")
-    private String password;
+  @Value("${app.security.user.name}")
+  private String username;
 
-    @Bean
-    public SecurityFilterChain filterChainConfiguration(HttpSecurity http) throws Exception {
-        return http
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/actuator/**").hasRole("ADMIN")    // Require authentication for actuator endpoints
-                        .requestMatchers("/eureka/**").hasRole("ADMIN")  // Allow Eureka dashboard access
-                        .anyRequest().authenticated()  // Allow all other requests
-                )
-                .httpBasic(Customizer.withDefaults())  // Enable Basic Authentication (optional)
-                .csrf(AbstractHttpConfigurer::disable)  // Disable CSRF for simplicity; adjust as needed
-                .build();
-    }
+  @Value("${app.security.user.password}")
+  private String password;
 
-    @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder){
+  @Bean
+  public SecurityFilterChain filterChainConfiguration(HttpSecurity http) throws Exception {
+    return http.authorizeHttpRequests(
+            authorize ->
+                authorize
+                    .requestMatchers("/actuator/**")
+                    .hasRole("ADMIN") // Require authentication for actuator endpoints
+                    .requestMatchers("/eureka/**")
+                    .hasRole("ADMIN") // Allow Eureka dashboard access
+                    .anyRequest()
+                    .authenticated() // Allow all other requests
+            )
+        .httpBasic(Customizer.withDefaults()) // Enable Basic Authentication (optional)
+        .csrf(AbstractHttpConfigurer::disable) // Disable CSRF for simplicity; adjust as needed
+        .build();
+  }
 
-        UserDetails admin = User.builder()
-                .username(username)
-                .password(passwordEncoder().encode(password))
-                .roles("ADMIN")
-                .build();
+  @Bean
+  public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
 
-        return new InMemoryUserDetailsManager(admin);
-    }
+    UserDetails admin =
+        User.builder()
+            .username(username)
+            .password(passwordEncoder().encode(password))
+            .roles("ADMIN")
+            .build();
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();  // Password encoder
-    }
+    return new InMemoryUserDetailsManager(admin);
+  }
+
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder(); // Password encoder
+  }
 }

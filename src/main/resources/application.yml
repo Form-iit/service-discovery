@@ -9,13 +9,13 @@ spring:
 eureka:
     server:
         enable-self-preservation: true
-    
+
     instance:
         # Prefer IP address for registration
         prefer-ip-address: true
-        
+
         ip-address: ${EUREKA_INSTANCE_IP_ADDRESS}
-        
+
         # Lease settings for instance health checking
         lease-renewal-interval-in-seconds: 30
         lease-expiration-duration-in-seconds: 90
