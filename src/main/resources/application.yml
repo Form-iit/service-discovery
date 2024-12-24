@@ -1,15 +1,7 @@
 spring:
     application:
         name: service-discovery
-    cloud:
-        loadbalancer:
-            cache:
-                enabled: true
-                ttl: 15s
 eureka:
-    server:
-        enable-self-preservation: true
-
     instance:
         # Prefer IP address for registration
         prefer-ip-address: true
@@ -19,6 +11,11 @@ eureka:
         # Lease settings for instance health checking
         lease-renewal-interval-in-seconds: 30
         lease-expiration-duration-in-seconds: 90
+    client:
+        serviceUrl:
+            defaultZone: http://${EUREKA_ADMIN_USERNAME}:${EUREKA_ADMIN_PASSWORD}@${EUREKA_INSTANCE_IP_ADDRESS}:${SERVER_PORT}/eureka/
+        register-with-eureka: false
+        fetch-registry: false
 
 # Security Configuration
 app:
@@ -35,7 +32,7 @@ management:
     endpoints:
         web:
             exposure:
-                include: health,info,metrics,prometheus,refresh,env
+                include: health,info,refresh,env
             base-path: /actuator
     endpoint:
         health:
@@ -46,9 +43,3 @@ logging:
     level:
         '[com.netflix.eureka]': WARN
         '[com.netflix.discovery]': WARN
-    file:
-        name: /var/log/eureka-server/eureka.log
-    logback:
-        rollingpolicy:
-            max-file-size: 10MB
-            max-history: 7
